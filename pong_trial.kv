@@ -1,0 +1,256 @@
+<PongBall>:
+    size: 50, 50
+    canvas:
+        Ellipse:
+            pos: self.pos
+            size: self.size
+
+<PongPaddle>:
+    size: 25, 200
+    canvas:
+        Rectangle:
+            pos:self.pos
+            size:self.size
+
+<PongGame>:
+    ball: pong_ball
+    player1: player_left
+    player2: player_right
+
+    canvas:
+        Rectangle:
+            pos: self.center_x-5, 0
+            size: 10, self.height
+    Label:
+        font_size: 70
+        center_x: root.width / 4
+        top: root.top - 50
+        text: str(root.player1.score)
+
+    Label:
+        font_size: 70
+        center_x: root.width * 3 / 4
+        top: root.top - 50
+        text: str(root.player2.score)
+
+    PongBall:
+        id: pong_ball
+        center: self.parent.center
+
+    PongPaddle:
+        id: player_left
+        x: root.x
+        center_y: root.center_y
+
+    PongPaddle:
+        id: player_right
+        x: root.width-self.width
+        center_y: root.center_y
+
+
+<ScreenManager>:
+    id: sm
+    Screen:
+        name: 'home'
+        BoxLayout:
+            orientation: 'vertical'
+
+            Label:
+                text: 'WELCOME TO PING PONG GAME'
+                font_size: 45
+                text_size: self.size
+                halign: 'center'
+                valign: 'middle'
+
+            Button:
+                text: 'Start New Game'
+                halign: 'center'
+                valign: 'middle'
+                font_size: 30
+                text_size: self.size
+                on_release: root.current= 'Enter Players Name'
+                
+            Button:
+                text: 'Resume'
+                halign: 'center'
+                valign: 'middle'
+                font_size: 30
+                text_size: self.size
+                pos: self.pos
+                on_press: root.current= 'game';game.resume()
+
+            Button:
+                text: 'Rules'
+                halign: 'center'
+                valign: 'middle'
+                font_size: 30
+                text_size: self.size
+                pos: self.pos
+                on_release: root.current= 'rule'
+
+    Screen:
+        name: 'game'
+        PongGame:
+            id: game
+            Label:
+                text: 'Player1'
+                id: f_player
+                font_size: 30
+                center_x: root.width / 4
+                top: root.top-1
+
+            Label:
+                text: "Player2"
+                id: s_player
+                font_size: 30
+                center_x: root.width * 3/ 4
+                top: root.top-1
+    
+    Screen:
+        name: 'Enter Players Name'
+        GridLayout:
+            cols: 2
+            Label:
+                text: 'Player 1 Name'
+                halign: 'center'
+                valign: 'middle'
+                font_size: 20
+                text_size: self.size
+                pos: self.pos
+
+            TextInput:
+                id: input1
+                text: f_player.text
+                multiline: False
+
+            Label:
+                text: 'Player 2 Name'
+                halign: 'center'
+                valign: 'middle'
+                font_size: 20
+                text_size: self.size
+                pos: self.pos
+            
+            TextInput:
+                id: input2
+                text: s_player.text
+                multiline: False
+            
+            GridLayout:
+                rows: 1
+                Button:
+                    text: 'Submit'
+                    text_size: self.size
+                    font_size: 30
+                    halign: 'center'
+                    valign: 'middle'
+                    on_press: f_player.text= input1.text
+                    on_press: s_player.text= input2.text
+                    on_release: root.current='game';game.serve_ball()
+
+            GridLayout:
+                cols: 2
+                Button:
+                    text: 'Exit'
+                    text_size: self.size
+                    font_size: 30
+                    halign: 'center'
+                    valign: 'middle'
+                    on_release: root.current='game';game.Exit_Screen()
+
+                Button:
+                    text: 'Home'
+                    text_size: self.size
+                    font_size: 30
+                    halign: 'center'
+                    valign: 'middle'
+                    on_release: root.current='home'
+    Screen:
+        name: 'rule'
+        BoxLayout:
+            orientation: 'vertical'
+            Label:
+                text: 'Please read the rules carefully.'
+                text_size: self.size
+                font_size: 30
+                halign: 'center'
+                valign: 'middle'
+
+            Label:
+                text: 'Players need to move their pong paddles and save the balls from dashing into their sides of the wall.'
+                text_size: self.size
+                font_size: 25
+
+            Label:
+                text: 'The player who pushes the ball into their opponents wall gets a score.'
+                text_size: self.size
+                font_size: 25
+
+            Label:
+                text: 'The first player to reach score 5 wins the game.'
+                text_size: self.size
+                font_size: 25
+
+            Label:
+                text: 'All The Best!!!!'
+                text_size: self.size
+                font_size: 30
+                halign: 'center'
+                valign: 'middle'
+
+            GridLayout:
+                cols: 2
+                Button:
+                    text: 'Go Back'
+                    text_size: self.size
+                    font_size: 30
+                    halign: 'center'
+                    valign: 'middle'
+                    on_press: root.current= 'home'
+
+                Button:
+                    text: 'Exit'
+                    text_size: self.size
+                    font_size: 30
+                    halign: 'center'
+                    valign: 'middle'
+                    on_press: root.current= 'game';game.Exit_Screen()
+
+    Screen:
+        name: 'winner'
+        GridLayout:
+            cols: 1
+            Label:
+                text: f_player.text + ' Congratulations!! You Win !!' if(game.player1.score) == int(5) else s_player.text + ' Congratulations!! You Win!!'
+                text_size: self.size
+                font_size: 45
+                halign: 'center'
+                valign: 'middle'
+            GridLayout:
+                rows: 1
+                Button:
+                    text: 'Play Again'
+                    text_size: self.size
+                    font_size: 35
+                    halign: 'center'
+                    valign: 'middle'
+                    on_release: root.current = 'game';game.PlayAgain()
+
+            GridLayout:
+                cols:2
+
+                Button:
+                    text: 'Home'
+                    text_size: self.size
+                    font_size: 35
+                    halign: 'center'
+                    valign: 'middle'
+                    on_release: root.current =game.homebutton()
+
+                Button:
+                    text: 'Exit'
+                    text_size: self.size
+                    font_size: 35
+                    halign: 'center'
+                    valign: 'middle'
+                    on_release: root.current = 'game'; game.Exit_Screen()    
